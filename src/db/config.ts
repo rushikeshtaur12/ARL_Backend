@@ -9,9 +9,9 @@ config();
 export const AppDataSource = new DataSource({
     type: "postgres",
     url: process.env.POSTGRES_URL || "",
-    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-    synchronize: true, // Set to false in production and use migrations
-    logging: process.env.NODE_ENV === "development",
+    ssl: { rejectUnauthorized: false },
+    synchronize: true,
+    logging: false,
     entities: [Project, ContactSubmission],
     subscribers: [],
     migrations: [],
