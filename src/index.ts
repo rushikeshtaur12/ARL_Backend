@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// SIMPLE & UNIVERSAL CORS
+
 app.use(
   cors({
     origin: "*",     // allow all frontends (safe for public API)
@@ -39,9 +39,9 @@ app.get("/", (req, res) => {
 // Start server after DB connects
 initializeDatabase()
   .then(() => {
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error("❌ Failed to start server:", err);
+    console.error("Failed to start server:", err);
     process.exit(1);
   });
