@@ -17,29 +17,27 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 // Allowed origins list
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:3001",
   FRONTEND_URL,                  // Your production frontend
-  /\.vercel\.app$/,              // All Vercel preview deployments
 ];
 
-// CORS handler
+// CORS handler - Allow all Vercel deployments
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow Postman, Thunderclient, mobile app (no origin)
+      // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
 
-      // Check if origin matches allowed list
-      const isAllowed = allowedOrigins.some((allowed) =>
-        allowed instanceof RegExp
-          ? allowed.test(origin)
-          : allowed === origin
-      );
-
-      if (isAllowed) {
+      // Allow all Vercel deployments and localhost
+      if (
+        origin.includes("vercel.app") ||
+        origin.includes("localhost") ||
+        origin === FRONTEND_URL
+      ) {
         callback(null, true);
       } else {
-        console.log(" CORS Blocked Origin:", origin);
-        callback(new Error("CORS BLOCKED by server: " + origin));
+        console.log("❌ CORS Blocked Origin:", origin);
+        callback(new Error("CORS BLOCKED: " + origin));
       }
     },
     credentials: true,
