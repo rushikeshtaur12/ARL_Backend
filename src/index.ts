@@ -25,6 +25,10 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Popcorn Portfolio Backend is popping!" });
 });
 
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Popcorn Portfolio Backend is popping!" });
+});
+
 initializeDatabase()
   .then(() => {
     app.listen(PORT, () => {
