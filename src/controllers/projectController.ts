@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { AppDataSource } from "../db/config";
 import { Project } from "../entity/Project";
-import { error } from "console";
+
 
 export const getProjects = async (req: Request, res: Response) => {
     const projectRepository = AppDataSource.getRepository(Project);
@@ -21,7 +21,7 @@ export const getProjectById = async (req: Request, res: Response) => {
         if (project) {
             res.status(200).json(project);
         } else {
-            res.status(404).json({ message: "Project not found" ,error:error});
+            res.status(404).json({ message: "Project not found"});
         }
     } catch (error) {
         res.status(500).json({ message: "Error fetching project", error });

@@ -11,55 +11,37 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ALL FRONTEND ALLOWED
-const allowedPatterns = [
-  /localhost/,
-  /vercel\.app/,
-  /studentconnectcommunity-9508s-projects\.vercel\.app/
-];
-
+// SIMPLE & UNIVERSAL CORS
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Postman, mobile apps
-
-      const isAllowed = allowedPatterns.some((pattern) =>
-        pattern.test(origin)
-      );
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        console.log("❌ CORS BLOCKED:", origin);
-        callback(new Error("CORS BLOCKED: " + origin));
-      }
-    },
-    credentials: true,
+    origin: "*",     // allow all frontends (safe for public API)
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
   })
 );
 
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 
 // Health Check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Backend is popping!" });
+  res.json({ status: "ok", message: "Backend is running" });
 });
 
-// Root
+// Root route
 app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "Backend is popping!" });
+  res.json({ status: "ok", message: "Backend is running" });
 });
 
-// DB + Server Start
+// Start server after DB connects
 initializeDatabase()
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error("Failed to start server:", err);
+    console.error("❌ Failed to start server:", err);
     process.exit(1);
   });
