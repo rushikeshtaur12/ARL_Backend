@@ -11,35 +11,26 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Your custom frontend domain (optional)
-const FRONTEND_URL = process.env.FRONTEND_URL;
-const PRODUCTION_FRONTEND = "https://arl-frontend-6uorun68f-studentconnectcommunity-9508s-projects.vercel.app";
-
-// Allowed origins list
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3001",
-  FRONTEND_URL,
-  PRODUCTION_FRONTEND,
+// ALL FRONTEND ALLOWED
+const allowedPatterns = [
+  /localhost/,
+  /vercel\.app/,
+  /studentconnectcommunity-9508s-projects\.vercel\.app/
 ];
 
-// CORS handler - Allow Vercel deployments and production frontend
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); // Postman, mobile apps
 
-      // Allow all Vercel deployments, localhost, and production frontend
-      if (
-        origin.includes("vercel.app") ||
-        origin.includes("localhost") ||
-        origin === FRONTEND_URL ||
-        origin === PRODUCTION_FRONTEND
-      ) {
+      const isAllowed = allowedPatterns.some((pattern) =>
+        pattern.test(origin)
+      );
+
+      if (isAllowed) {
         callback(null, true);
       } else {
-        console.log("❌ CORS Blocked Origin:", origin);
+        console.log("❌ CORS BLOCKED:", origin);
         callback(new Error("CORS BLOCKED: " + origin));
       }
     },
@@ -55,20 +46,18 @@ app.use("/api/contact", contactRoutes);
 
 // Health Check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Popcorn Portfolio Backend is popping!" });
+  res.json({ status: "ok", message: "Backend is popping!" });
 });
 
 // Root
 app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "Popcorn Portfolio Backend is popping!" });
+  res.json({ status: "ok", message: "Backend is popping!" });
 });
 
-// Start server when DB is ready
+// DB + Server Start
 initializeDatabase()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => {
     console.error("Failed to start server:", err);
