@@ -14,25 +14,18 @@ const PORT = process.env.PORT || 5000;
 // Your custom frontend domain (optional)
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-// Allowed origins list
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3001",
-  FRONTEND_URL,                  // Your production frontend
-];
+// Explicitly allow your deployed frontend URL
+const PRODUCTION_FRONTEND = "https://arl-frontend-6uorun68f-studentconnectcommunity-9508s-projects.vercel.app";
 
-// CORS handler - Allow all Vercel deployments
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
-
-      // Allow all Vercel deployments and localhost
       if (
         origin.includes("vercel.app") ||
         origin.includes("localhost") ||
-        origin === FRONTEND_URL
+        origin === FRONTEND_URL ||
+        origin === PRODUCTION_FRONTEND
       ) {
         callback(null, true);
       } else {
